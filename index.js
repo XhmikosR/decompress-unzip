@@ -1,13 +1,15 @@
-'use strict';
-const fileType = require('file-type');
-const getStream = require('get-stream');
-const pify = require('pify');
-const yauzl = require('yauzl');
+/* eslint-disable no-bitwise */
+
+import {Buffer} from 'node:buffer';
+import {promisify} from 'node:util';
+import fileType from 'file-type';
+import getStream from 'get-stream';
+import yauzl from 'yauzl';
 
 const getType = (entry, mode) => {
-	const IFMT = 61440;
-	const IFDIR = 16384;
-	const IFLNK = 40960;
+	const IFMT = 61_440;
+	const IFDIR = 16_384;
+	const IFLNK = 40_960;
 	const madeBy = entry.versionMadeBy >> 8;
 
 	if ((mode & IFMT) === IFLNK) {
@@ -23,9 +25,9 @@ const getType = (entry, mode) => {
 
 const extractEntry = (entry, zip) => {
 	const file = {
-		mode: (entry.externalFileAttributes >> 16) & 0xFFFF,
+		mode: (entry.externalFileAttributes >> 16) & 0xFF_FF,
 		mtime: entry.getLastModDate(),
-		path: entry.fileName
+		path: entry.fileName,
 	};
 
 	file.type = getType(entry, file.mode);
@@ -38,7 +40,7 @@ const extractEntry = (entry, zip) => {
 		file.mode = 420;
 	}
 
-	return pify(zip.openReadStream.bind(zip))(entry)
+	return promisify(zip.openReadStream.bind(zip))(entry)
 		.then(getStream.buffer)
 		.then(buf => {
 			file.data = buf;
@@ -49,9 +51,9 @@ const extractEntry = (entry, zip) => {
 
 			return file;
 		})
-		.catch(err => {
+		.catch(error => {
 			zip.close();
-			throw err;
+			throw error;
 		});
 };
 
@@ -73,7 +75,7 @@ const extractFile = zip => new Promise((resolve, reject) => {
 	zip.on('end', () => resolve(files));
 });
 
-module.exports = () => buf => {
+const decompress = () => buf => {
 	if (!Buffer.isBuffer(buf)) {
 		return Promise.reject(new TypeError(`Expected a Buffer, got ${typeof buf}`));
 	}
@@ -82,5 +84,7 @@ module.exports = () => buf => {
 		return Promise.resolve([]);
 	}
 
-	return pify(yauzl.fromBuffer)(buf, {lazyEntries: true}).then(extractFile);
+	return promisify(yauzl.fromBuffer)(buf, {lazyEntries: true}).then(extractFile);
 };
+
+export default decompress;

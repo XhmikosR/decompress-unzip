@@ -1,20 +1,20 @@
-# decompress-unzip [![Build Status](https://travis-ci.org/kevva/decompress-unzip.svg?branch=master)](https://travis-ci.org/kevva/decompress-unzip)
+# decompress-unzip [![CI](https://github.com/kevva/decompress-unzip/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/kevva/decompress-unzip/actions/workflows/ci.yml)
 
 > zip decompress plugin
 
 
 ## Install
 
-```
-$ npm install --save decompress-unzip
+```sh
+npm install decompress-unzip
 ```
 
 
 ## Usage
 
 ```js
-const decompress = require('decompress');
-const decompressUnzip = require('decompress-unzip');
+import decompress from 'decompress';
+import decompressUnzip from 'decompress-unzip';
 
 decompress('unicorn.zip', 'dist', {
 	plugins: [
