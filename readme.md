@@ -1,4 +1,4 @@
-# decompress-unzip [![CI](https://github.com/kevva/decompress-unzip/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/kevva/decompress-unzip/actions/workflows/ci.yml)
+# decompress-unzip [![CI](https://github.com/XhmikosR/decompress-unzip/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/XhmikosR/decompress-unzip/actions/workflows/ci.yml)
 
 > zip decompress plugin
 
@@ -6,15 +6,15 @@
 ## Install
 
 ```sh
-npm install decompress-unzip
+npm install @xhmikosr/decompress-unzip
 ```
 
 
 ## Usage
 
 ```js
-import decompress from 'decompress';
-import decompressUnzip from 'decompress-unzip';
+import decompress from '@xhmikosr/decompress';
+import decompressUnzip from '@xhmikosr/decompress-unzip';
 
 decompress('unicorn.zip', 'dist', {
 	plugins: [
