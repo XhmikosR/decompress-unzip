@@ -3,14 +3,14 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import isJpg from 'is-jpg';
 import test from 'ava';
-import m from './index.js';
+import decompressUnzip from './index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 test('extract file', async t => {
 	const buf = await fs.readFile(path.join(__dirname, 'fixtures', 'file.zip'));
-	const files = await m()(buf);
+	const files = await decompressUnzip()(buf);
 
 	t.is(files[0].path, 'test.jpg');
 	t.true(isJpg(files[0].data));
@@ -18,7 +18,7 @@ test('extract file', async t => {
 
 test('extract multiple files', async t => {
 	const buf = await fs.readFile(path.join(__dirname, 'fixtures', 'multiple.zip'));
-	const files = await m()(buf);
+	const files = await decompressUnzip()(buf);
 
 	t.is(files.length, 4);
 	t.is(files[0].path, '0.txt');
@@ -30,7 +30,7 @@ test('extract multiple files', async t => {
 
 test('extract symlinks', async t => {
 	const buf = await fs.readFile(path.join(__dirname, 'fixtures', 'symlink.zip'));
-	const files = await m()(buf);
+	const files = await decompressUnzip()(buf);
 
 	t.is(files[0].path, 'ReactiveCocoa');
 	t.is(files[0].type, 'symlink');
@@ -39,11 +39,11 @@ test('extract symlinks', async t => {
 
 test('return empty array if non-valid file is supplied', async t => {
 	const buf = await fs.readFile(__filename);
-	const files = await m()(buf);
+	const files = await decompressUnzip()(buf);
 
 	t.is(files.length, 0);
 });
 
 test('throw on wrong input', async t => {
-	await t.throwsAsync(m()('foo'), undefined, 'Expected a Buffer, got string');
+	await t.throwsAsync(decompressUnzip()('foo'), undefined, 'Expected a Buffer, got string');
 });
