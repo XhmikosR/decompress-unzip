@@ -3,7 +3,7 @@
 import {Buffer} from 'node:buffer';
 import {promisify} from 'node:util';
 import {fileTypeFromBuffer} from 'file-type';
-import getStream from 'get-stream';
+import {getStreamAsBuffer} from 'get-stream';
 import yauzl from 'yauzl';
 
 const getType = (entry, mode) => {
@@ -41,12 +41,12 @@ const extractEntry = (entry, zip) => {
 	}
 
 	return promisify(zip.openReadStream.bind(zip))(entry)
-		.then(getStream.buffer)
-		.then(buf => {
-			file.data = buf;
+		.then(getStreamAsBuffer)
+		.then(buffer => {
+			file.data = buffer;
 
 			if (file.type === 'symlink') {
-				file.linkname = buf.toString();
+				file.linkname = buffer.toString();
 			}
 
 			return file;
