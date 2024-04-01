@@ -3,7 +3,10 @@
 	"version": "6.0.0",
 	"description": "decompress zip plugin",
 	"license": "MIT",
-	"repository": "XhmikosR/decompress-unzip",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/XhmikosR/decompress-unzip.git"
+	},
 	"publishConfig": {
 		"access": "public"
 	},
