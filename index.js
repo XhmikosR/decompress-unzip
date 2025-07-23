@@ -3,7 +3,7 @@
 import {Buffer} from 'node:buffer';
 import {promisify} from 'node:util';
 import {fileTypeFromBuffer} from 'file-type';
-import getStream from 'get-stream';
+import {getStreamAsBuffer} from 'get-stream';
 import yauzl from 'yauzl';
 
 const getType = (entry, mode) => {
@@ -41,7 +41,7 @@ const extractEntry = (entry, zip) => {
 	}
 
 	return promisify(zip.openReadStream.bind(zip))(entry)
-		.then(getStream.buffer)
+		.then(getStreamAsBuffer)
 		.then(buf => {
 			file.data = buf;
 
