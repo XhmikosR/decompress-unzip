@@ -16,7 +16,7 @@
 		"url": "https://github.com/kevva"
 	},
 	"engines": {
-		"node": ">=18"
+		"node": ">=20"
 	},
 	"scripts": {
 		"ava": "ava",
@@ -40,14 +40,14 @@
 		"zip"
 	],
 	"dependencies": {
-		"file-type": "^20.5.0",
+		"file-type": "^21.3.0",
 		"get-stream": "^6.0.1",
-		"yauzl": "^3.1.2"
+		"yauzl": "^3.2.0"
 	},
 	"devDependencies": {
-		"ava": "~6.2.0",
+		"ava": "^6.4.1",
 		"is-jpg": "^3.0.0",
-		"xo": "^0.60.0"
+		"xo": "^1.2.3"
 	},
 	"xo": {
 		"rules": {

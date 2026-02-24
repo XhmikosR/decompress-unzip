@@ -32,7 +32,7 @@ const extractEntry = (entry, zip) => {
 
 	file.type = getType(entry, file.mode);
 
-	if (file.mode === 0 && file.type === 'directory') {
+	if (file.mode === 0 && file.mime === 'application/zip') {
 		file.mode = 493;
 	}
 
