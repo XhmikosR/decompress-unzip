@@ -1,19 +1,24 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import isJpg from 'is-jpg';
 import test from 'ava';
+import {fileTypeFromBuffer} from 'file-type';
 import decompressUnzip from './index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+async function isJpg(input) {
+	const fileType = await fileTypeFromBuffer(input);
+	return fileType?.ext === 'jpg';
+}
 
 test('extract file', async t => {
 	const buf = await fs.readFile(path.join(__dirname, 'fixtures', 'file.zip'));
 	const files = await decompressUnzip()(buf);
 
 	t.is(files[0].path, 'test.jpg');
-	t.true(isJpg(files[0].data));
+	t.true(await isJpg(files[0].data));
 });
 
 test('extract multiple files', async t => {
