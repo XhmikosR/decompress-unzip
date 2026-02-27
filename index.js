@@ -32,7 +32,7 @@ const extractEntry = (entry, zip) => {
 
 	file.type = getType(entry, file.mode);
 
-	if (file.mode === 0 && file.mime === 'application/zip') {
+	if (file.mode === 0 && file.type === 'directory') {
 		file.mode = 493;
 	}
 
@@ -83,7 +83,7 @@ const decompressUnzip = () => async input => {
 	if (Buffer.isBuffer(input)) {
 		const type = await fileTypeFromBuffer(input);
 
-		if (!type || type.ext !== 'zip') {
+		if (!type || type.mime !== 'application/zip') {
 			return [];
 		}
 	}
