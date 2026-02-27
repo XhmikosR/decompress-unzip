@@ -1,6 +1,6 @@
 {
 	"name": "@xhmikosr/decompress-unzip",
-	"version": "8.0.0",
+	"version": "8.0.1",
 	"description": "decompress zip plugin",
 	"license": "MIT",
 	"repository": {
