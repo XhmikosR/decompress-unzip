@@ -23,7 +23,7 @@ const getType = (entry, mode) => {
 	return 'file';
 };
 
-const extractEntry = (entry, zip) => {
+const extractEntry = async (entry, zip) => {
 	const file = {
 		mode: (entry.externalFileAttributes >> 16) & 0xFF_FF,
 		mtime: entry.getLastModDate(),
@@ -40,21 +40,20 @@ const extractEntry = (entry, zip) => {
 		file.mode = 420;
 	}
 
-	return promisify(zip.openReadStream.bind(zip))(entry)
-		.then(getStreamAsBuffer)
-		.then(buf => {
-			file.data = buf;
+	try {
+		const stream = await promisify(zip.openReadStream.bind(zip))(entry);
+		const buf = await getStreamAsBuffer(stream);
+		file.data = buf;
 
-			if (file.type === 'symlink') {
-				file.linkname = buf.toString();
-			}
+		if (file.type === 'symlink') {
+			file.linkname = buf.toString();
+		}
 
-			return file;
-		})
-		.catch(error => {
-			zip.close();
-			throw error;
-		});
+		return file;
+	} catch (error) {
+		zip.close();
+		throw error;
+	}
 };
 
 const extractFile = zip => new Promise((resolve, reject) => {
@@ -88,7 +87,9 @@ const decompressUnzip = () => async input => {
 		}
 	}
 
-	return promisify(yauzl.fromBuffer)(input, {lazyEntries: true}).then(extractFile);
+	const zip = await promisify(yauzl.fromBuffer)(input, {lazyEntries: true});
+
+	return extractFile(zip);
 };
 
 export default decompressUnzip;
