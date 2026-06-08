@@ -1,7 +1,6 @@
 /* eslint-disable no-bitwise */
 
 import {Buffer} from 'node:buffer';
-import {promisify} from 'node:util';
 import {fileTypeFromBuffer} from 'file-type';
 import {getStreamAsBuffer} from 'get-stream';
 import yauzl from 'yauzl';
@@ -40,39 +39,16 @@ const extractEntry = async (entry, zip) => {
 		file.mode = 420;
 	}
 
-	try {
-		const stream = await promisify(zip.openReadStream.bind(zip))(entry);
-		const buf = await getStreamAsBuffer(stream);
-		file.data = buf;
+	const stream = await zip.openReadStreamPromise(entry);
+	const data = await getStreamAsBuffer(stream);
+	file.data = data;
 
-		if (file.type === 'symlink') {
-			file.linkname = buf.toString();
-		}
-
-		return file;
-	} catch (error) {
-		zip.close();
-		throw error;
+	if (file.type === 'symlink') {
+		file.linkname = data.toString();
 	}
+
+	return file;
 };
-
-const extractFile = zip => new Promise((resolve, reject) => {
-	const files = [];
-
-	zip.readEntry();
-
-	zip.on('entry', entry => {
-		extractEntry(entry, zip)
-			.catch(reject)
-			.then(file => {
-				files.push(file);
-				zip.readEntry();
-			});
-	});
-
-	zip.on('error', reject);
-	zip.on('end', () => resolve(files));
-});
 
 const decompressUnzip = () => async input => {
 	if (!Buffer.isBuffer(input)) {
@@ -85,9 +61,14 @@ const decompressUnzip = () => async input => {
 		return [];
 	}
 
-	const zip = await promisify(yauzl.fromBuffer)(input, {lazyEntries: true});
+	const zip = await yauzl.fromBufferPromise(input);
+	const files = [];
 
-	return extractFile(zip);
+	for await (const entry of zip.eachEntry()) {
+		files.push(await extractEntry(entry, zip));
+	}
+
+	return files;
 };
 
 export default decompressUnzip;
