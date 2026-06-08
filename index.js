@@ -79,12 +79,10 @@ const decompressUnzip = () => async input => {
 		throw new TypeError(`Expected a Buffer, got ${typeof input}`);
 	}
 
-	if (Buffer.isBuffer(input)) {
-		const type = await fileTypeFromBuffer(input);
+	const type = await fileTypeFromBuffer(input);
 
-		if (!type || type.mime !== 'application/zip') {
-			return [];
-		}
+	if (!type || type.mime !== 'application/zip') {
+		return [];
 	}
 
 	const zip = await promisify(yauzl.fromBuffer)(input, {lazyEntries: true});
