@@ -70,9 +70,6 @@ test('handle directory with mode 0', async t => {
 });
 
 test('handle corrupted zip', async t => {
-	// ZIP file with DEFLATE compression but invalid compressed data
 	const buf = await fs.readFile(path.join(__dirname, 'fixtures', 'corrupted.zip'));
-
-	// This should trigger error handling when yauzl tries to decompress
 	await t.throwsAsync(decompressUnzip()(buf));
 });
