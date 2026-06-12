@@ -1,8 +1,8 @@
 /* eslint-disable no-bitwise */
 
 import {Buffer} from 'node:buffer';
-import {buffer as streamToBuffer} from 'node:stream/consumers';
 import {fileTypeFromBuffer} from 'file-type';
+import {getStreamAsBuffer} from 'get-stream';
 import yauzl from 'yauzl';
 
 const getType = (entry, mode) => {
@@ -40,7 +40,7 @@ const extractEntry = async (entry, zip) => {
 	}
 
 	const stream = await zip.openReadStreamPromise(entry);
-	const data = await streamToBuffer(stream);
+	const data = await getStreamAsBuffer(stream);
 	file.data = data;
 
 	if (file.type === 'symlink') {
