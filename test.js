@@ -69,6 +69,15 @@ test('handle directory with mode 0', async t => {
 	t.is(files[0].mode, 493);
 });
 
+test('type a directory entry by its trailing slash even without the mode bit', async t => {
+	const buf = await fs.readFile(path.join(__dirname, 'fixtures', 'dir-as-file.zip'));
+	const files = await decompressUnzip()(buf);
+
+	t.is(files.length, 1);
+	t.is(files[0].path, 'd/');
+	t.is(files[0].type, 'directory');
+});
+
 test('handle corrupted zip', async t => {
 	const buf = await fs.readFile(path.join(__dirname, 'fixtures', 'corrupted.zip'));
 	await t.throwsAsync(decompressUnzip()(buf));
