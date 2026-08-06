@@ -15,7 +15,8 @@ const getType = (entry, mode) => {
 		return 'symlink';
 	}
 
-	if ((mode & IFMT) === IFDIR || (madeBy === 0 && entry.externalFileAttributes === 16)) {
+	// A trailing slash marks a directory even when the mode bits don't say so
+	if ((mode & IFMT) === IFDIR || (madeBy === 0 && entry.externalFileAttributes === 16) || entry.fileName.endsWith('/')) {
 		return 'directory';
 	}
 
